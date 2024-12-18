@@ -14,7 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.shareit.item.dto.AdvancedItemDto;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.NewCommentRequest;
 import ru.practicum.shareit.item.dto.NewItemRequest;
 import ru.practicum.shareit.item.dto.UpdateItemRequest;
 import ru.practicum.shareit.item.service.ItemService;
@@ -42,19 +45,19 @@ public class ItemController {
     @PatchMapping("/{itemId}")
     public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") long userId,
                               @PathVariable("itemId") long itemId,
-                              @RequestBody UpdateItemRequest updateItemRequest) { //не понимаю, происходит ли валидация непустых полей при обновлении и как?
+                              @RequestBody UpdateItemRequest updateItemRequest) {
         log.info("Вызван эндпоинт обновления вещи с ID {}", itemId);
         return itemService.updateItem(userId, itemId, updateItemRequest);
     }
 
     @GetMapping
-    public List<ItemDto> getItems(@RequestHeader("X-Sharer-User-Id") long userId) {
+    public List<AdvancedItemDto> getItems(@RequestHeader("X-Sharer-User-Id") long userId) {
         log.info("Вызван эндпоинт получения списка вещей");
         return itemService.getAllItems(userId);
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItemById(@PathVariable("itemId") long itemId) {
+    public AdvancedItemDto getItemById(@PathVariable("itemId") long itemId) {
         log.info("Вызван эндпоинт получения вещи с ID {}", itemId);
         return itemService.getItemById(itemId);
     }
@@ -63,5 +66,14 @@ public class ItemController {
     public List<ItemDto> searchItems(@RequestParam("text") String text) {
         log.info("Вызван эндпоинт поиска вещей");
         return itemService.searchItems(text);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CommentDto createComment(@RequestHeader("X-Sharer-User-Id") long userId,
+                                    @PathVariable("itemId") long itemId,
+                                    @Valid @RequestBody NewCommentRequest newCommentRequest) {
+        log.info("Вызван эндпоинт создания комментария");
+        return itemService.createComment(userId, itemId, newCommentRequest);
     }
 }

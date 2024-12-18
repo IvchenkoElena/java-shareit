@@ -1,7 +1,9 @@
-package ru.practicum.shareit.item.model;
+package ru.practicum.shareit.booking.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,31 +12,37 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.ToString;
-import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
+
+import java.time.LocalDateTime;
+
 /**
- * TODO Sprint add-controllers.
+ * TODO Sprint add-bookings.
  */
 @Entity
-@Table(name = "items")
+@Table(name = "bookings")
 @Data
-public class Item {
+public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private String name;
-    private String description;
+    @Column(name = "start_date")
+    private LocalDateTime start;
+
+    @Column(name = "end_date")
+    private LocalDateTime end;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
-    private User owner;
-
-    @Column(name = "is_available")
-    private Boolean available;
+    private Item item;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
-    private ItemRequest request;
+    private User booker;
+
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.WAITING;
 }

@@ -1,23 +1,23 @@
 package ru.practicum.shareit.item.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Data;
+import java.time.LocalDateTime;
 
-
-/**
- * TODO Sprint add-controllers.
- */
 @Data
-public class ItemDto {
+public class CommentDto {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private long id;
-    private String name;
-    private String description;
-    private Boolean available;
+    private String text;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private long ownerId;
+    private long itemId;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private long requestId;
+    private long authorId;
+
+    private String authorName;
+
+    private LocalDateTime created;
 }

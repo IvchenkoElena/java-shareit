@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.ConflictException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.NewUserRequest;
 import ru.practicum.shareit.user.dto.UpdateUserRequest;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -24,24 +25,24 @@ public class UserServiceImpl implements UserService {
         log.info("Вызван сервисный метод сохранения пользователя");
         User newUser = UserMapper.mapToUser(request);
         validateUserEmail(newUser);
-        newUser = userRepository.createUser(newUser);
+        newUser = userRepository.save(newUser);
         return UserMapper.mapToUserDto(newUser);
     }
 
     @Override
     public UserDto updateUser(long userId, UpdateUserRequest request) {
         log.info("Вызван сервисный метод обновления пользователя");
-        User oldUser = userRepository.getUserById(userId);
+        User oldUser = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь с ID " + userId + " не найден"));
         User newUser = UserMapper.updateUserFields(oldUser, request);
         validateUserEmail(newUser);
-        userRepository.updateUser(userId, newUser);
+        userRepository.save(newUser);
         return UserMapper.mapToUserDto(newUser);
     }
 
     @Override
     public List<UserDto> getAllUsers() {
         log.info("Вызван сервисный метод вывода списка пользователей");
-        return userRepository.getAllUsers().stream()
+        return userRepository.findAll().stream()
                 .map(UserMapper::mapToUserDto)
                 .toList();
     }
@@ -49,20 +50,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserById(long userId) {
         log.info("Вызван сервисный метод вывода пользователя с ID {}", userId);
-        User user = userRepository.getUserById(userId);
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь с ID " + userId + " не найден"));
         return UserMapper.mapToUserDto(user);
     }
 
     @Override
     public void deleteUserById(long userId) {
         log.info("Вызван сервисный метод удаления пользователя с ID {}", userId);
-        userRepository.deleteUserById(userId);
+        userRepository.deleteById(userId);
     }
 
     private void validateUserEmail(User user) {
         long id = user.getId();
         String email = user.getEmail();
-        if (userRepository.getAllUsers().stream()
+        if (userRepository.findAll().stream()
                 .filter(u -> u.getId() != id)
                 .map(User::getEmail)
                 .toList()

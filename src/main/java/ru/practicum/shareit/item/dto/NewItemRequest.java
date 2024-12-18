@@ -3,7 +3,6 @@ package ru.practicum.shareit.item.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import ru.practicum.shareit.request.ItemRequest;
 
 @Data
 public class NewItemRequest {
@@ -13,5 +12,5 @@ public class NewItemRequest {
     private String description;
     @NotNull
     private Boolean available;
-    private ItemRequest request;
+    private long requestId;
 }

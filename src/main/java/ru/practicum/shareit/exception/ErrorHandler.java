@@ -12,14 +12,14 @@ import java.util.Map;
 public class ErrorHandler {
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)//400
     public Map<String, String> handleValidationException(final ValidationException e) {
         return Map.of("error", "Ошибка валидации",
                 "errorMessage", e.getMessage());
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.NOT_FOUND)//404
     public Map<String, String> handleNotFoundException(final NotFoundException e) {
         return Map.of("error", "Искомый объект не найден",
                 "errorMessage", e.getMessage());
